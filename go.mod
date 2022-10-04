@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/buildpacks/libcnb v1.27.0
-	github.com/onsi/gomega v1.20.1
+	github.com/onsi/gomega v1.20.2
 	github.com/paketo-buildpacks/libpak v1.61.0
 	github.com/sclevine/spec v1.4.0
 )
