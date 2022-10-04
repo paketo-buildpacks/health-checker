@@ -1,0 +1,27 @@
+github:
+  username: ${{ secrets.JAVA_GITHUB_USERNAME }}
+  token:    ${{ secrets.JAVA_GITHUB_TOKEN }}
+
+codeowners:
+- path:  "*"
+  owner: "@paketo-buildpacks/utilities-maintainers"
+
+package:
+  repository:     gcr.io/paketo-buildpacks/health-checker
+  register:       true
+  registry_token: ${{ secrets.JAVA_GITHUB_TOKEN }}
+
+docker_credentials:
+- registry: gcr.io
+  username: _json_key
+  password: ${{ secrets.JAVA_GCLOUD_SERVICE_ACCOUNT_KEY }}
+
+dependencies:
+- name:            Tiny Health Checker
+  id:              thc
+  uses:            docker://ghcr.io/paketo-buildpacks/actions/github-release-dependency:main
+  with:
+    glob:       thc-.+-amd64_linux.tar.xz
+    owner:      thc
+    repository: thc
+    token:      ${{ secrets.JAVA_GITHUB_TOKEN }}

@@ -1,0 +1,61 @@
+# Copyright 2018-2022 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+api = "0.7"
+
+[buildpack]
+  description = "A Cloud Native Buildpack that provides a health check binary tool"
+  homepage = "https://github.com/paketo-buildpacks/health-checker"
+  id = "paketo-buildpacks/health-checker"
+  keywords = ["health", "check", "monitor"]
+  name = "Paketo Buildpack for Health Checkers"
+  sbom-formats = ["application/vnd.syft+json", "application/vnd.cyclonedx+json"]
+  version = "{{.version}}"
+
+  [[buildpack.licenses]]
+    type = "Apache-2.0"
+    uri = "https://github.com/paketo-buildpacks/health-checker/blob/main/LICENSE"
+
+[metadata]
+  include-files = ["LICENSE", "NOTICE", "README.md", "bin/build", "bin/detect", "bin/main", "buildpack.toml"]
+  pre-package = "scripts/build.sh"
+
+  [[metadata.configurations]]
+    build = true
+    default = "false"
+    description = "contributes a health checker if enabled"
+    name = "BP_HEALTH_CHECKER_ENABLED"
+
+  [[metadata.configurations]]
+    build = true
+    default = "thc"
+    description = "which health checker to contribute"
+    name = "BP_HEALTH_CHECKER_DEPENDENCY"
+
+  [[metadata.dependencies]]
+    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.5.0:*:*:*:*:*:*:*"]
+    id = "thc"
+    name = "Tiny Health Checker"
+    purl = "pkg:generic/thc@0.5.0?arch=amd64"
+    sha256 = "7355fc9332f89656ee749a9c88b75b00dad594a21fdb1034f9a4b88d02aeba3c"
+    stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
+    uri = "https://github.com/dmikusa-pivotal/tiny-health-checker/releases/download/v0.5.0/thc-x86_64-unknown-linux-musl"
+    version = "0.5.0"
+
+    [[metadata.dependencies.licenses]]
+      type = "Apache-2"
+      uri = "https://github.com/dmikusa-pivotal/tiny-health-checker/blob/main/LICENSE"
+
+[[stacks]]
+  id = "*"
