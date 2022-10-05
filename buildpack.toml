@@ -50,7 +50,7 @@ api = "0.7"
     purl = "pkg:generic/thc@0.5.0?arch=amd64"
     sha256 = "7355fc9332f89656ee749a9c88b75b00dad594a21fdb1034f9a4b88d02aeba3c"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://github.com/dmikusa-pivotal/tiny-health-checker/releases/download/v0.5.0/thc-x86_64-unknown-linux-musl"
+    uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.5.0/thc-x86_64-unknown-linux-musl"
     version = "0.5.0"
 
     [[metadata.dependencies.licenses]]
