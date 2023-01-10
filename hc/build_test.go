@@ -17,8 +17,6 @@
 package hc_test
 
 import (
-	"io/ioutil"
-	"os"
 	"testing"
 
 	"github.com/buildpacks/libcnb"
@@ -38,7 +36,7 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 
-		ctx.Application.Path, err = ioutil.TempDir("", "build")
+		ctx.Application.Path = t.TempDir()
 		Expect(err).NotTo(HaveOccurred())
 
 		ctx.Plan.Entries = append(ctx.Plan.Entries, libcnb.BuildpackPlanEntry{Name: "hc"})
@@ -52,10 +50,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 			},
 		}
 		ctx.StackID = "test-stack-id"
-	})
-
-	it.After(func() {
-		Expect(os.RemoveAll(ctx.Application.Path)).To(Succeed())
 	})
 
 	it("contributes tiny health checker", func() {

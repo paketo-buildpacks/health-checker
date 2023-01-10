@@ -17,7 +17,6 @@
 package hc_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -40,12 +39,8 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 	it.Before(func() {
 		var err error
 
-		ctx.Layers.Path, err = ioutil.TempDir("", "thc-layers")
+		ctx.Layers.Path = t.TempDir()
 		Expect(err).NotTo(HaveOccurred())
-	})
-
-	it.After(func() {
-		Expect(os.RemoveAll(ctx.Layers.Path)).To(Succeed())
 	})
 
 	it("contributes health checker", func() {

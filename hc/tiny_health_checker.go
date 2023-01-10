@@ -46,13 +46,6 @@ func NewTinyHealthChecker(dependency libpak.BuildpackDependency, cache libpak.De
 func (t TinyHealthChecker) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	t.LayerContributor.Logger = t.Logger
 
-	// if set at build time, we bake them into the image, user can override at runtime
-	for _, envVarName := range []string{"THC_PORT", "THC_PATH", "CONN_TIMEOUT", "REQ_TIMEOUT"} {
-		if val, found := t.ConfigResolver.Resolve(envVarName); found {
-			layer.LaunchEnvironment.ProcessDefault("health-check", envVarName, val)
-		}
-	}
-
 	return t.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
 		binDir := filepath.Join(layer.Path, "bin")
 
@@ -69,6 +62,13 @@ func (t TinyHealthChecker) Contribute(layer libcnb.Layer) (libcnb.Layer, error) 
 
 		if err := os.Chmod(hcBin, 0775); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to `chmod 775` binary %s\n%w", hcBin, err)
+		}
+
+		// if set at build time, we bake them into the image, user can override at runtime
+		for _, envVarName := range []string{"THC_PORT", "THC_PATH", "CONN_TIMEOUT", "REQ_TIMEOUT"} {
+			if val, found := t.ConfigResolver.Resolve(envVarName); found {
+				layer.LaunchEnvironment.ProcessDefault("health-check", envVarName, val)
+			}
 		}
 
 		return layer, nil
