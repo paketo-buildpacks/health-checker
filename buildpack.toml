@@ -44,14 +44,14 @@ api = "0.7"
     name = "BP_HEALTH_CHECKER_DEPENDENCY"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.8.0:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.9.0:*:*:*:*:*:*:*"]
     id = "thc"
     name = "Tiny Health Checker"
-    purl = "pkg:generic/thc@0.8.0?arch=amd64"
-    sha256 = "eca042851d6dc8c2158a923aaf0736d8b9141a10ee8b77a2a45c9528ef74799b"
+    purl = "pkg:generic/thc@0.9.0?arch=amd64"
+    sha256 = "0cff61ee44a9e2fdc602e8f8f494d40b7a386ebb119f08aaf0a33e27b2df8ff4"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
-    uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.8.0/thc-x86_64-unknown-linux-musl"
-    version = "0.8.0"
+    uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.9.0/thc-x86_64-unknown-linux-musl"
+    version = "0.9.0"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2"
