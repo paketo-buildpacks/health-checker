@@ -49,6 +49,8 @@ api = "0.7"
     name = "Tiny Health Checker"
     purl = "pkg:generic/thc@0.18.0?arch=amd64"
     sha256 = "9fc69e4cf7d3359ff41d9c6b5da4d14bd5c50484c0386621e03e0d5924d07d5e"
+    source = "https://github.com/dmikusa/tiny-health-checker/archive/refs/tags/v0.18.0.tar.gz"
+    source-sha256 = "8a51dff55bb0d6a233920d5ff1313385bcc80f247cec39e94ac90f205f976bc9"
     stacks = ["io.buildpacks.stacks.bionic", "io.paketo.stacks.tiny", "*"]
     uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.18.0/thc-x86_64-unknown-linux-musl"
     version = "0.18.0"
