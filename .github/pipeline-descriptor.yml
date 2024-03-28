@@ -38,3 +38,4 @@ dependencies:
     owner:      dmikusa
     repository: tiny-health-checker
     token:      ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
+    arch:       arm64
