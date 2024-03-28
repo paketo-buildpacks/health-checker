@@ -28,3 +28,13 @@ dependencies:
     owner:      dmikusa
     repository: tiny-health-checker
     token:      ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
+
+# ARM64
+- name:            Tiny Health Checker ARM64
+  id:              thc
+  uses:            docker://ghcr.io/paketo-buildpacks/actions/github-release-dependency:main
+  with:
+    glob:       thc-aarch64-unknown-linux-musl
+    owner:      dmikusa
+    repository: tiny-health-checker
+    token:      ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
