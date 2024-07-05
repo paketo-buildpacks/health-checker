@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2022 the original author or authors.
+ * Copyright 2018-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,6 @@ import (
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 )
-
-type ProcessContributor interface {
-	ContributeProcesses() []libcnb.Process
-}
 
 type Build struct {
 	Logger bard.Logger
@@ -63,11 +59,10 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 			return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
 		}
 
-		hcLayercontributor := NewTinyHealthChecker(hcDependency, dc, cr)
+		hcLayercontributor := NewTinyHealthChecker(hcDependency, dc, cr, context.Application.Path)
 		hcLayercontributor.Logger = b.Logger
 
 		result.Layers = append(result.Layers, hcLayercontributor)
-		result.Processes = hcLayercontributor.ContributeProcesses()
 	}
 
 	return result, nil
