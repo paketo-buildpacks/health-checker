@@ -13,7 +13,7 @@ The buildpack will do the following:
 
 * If `$BP_HEALTH_CHECKER_ENABLED` is set to `true`, requests that a health checker be installed by requiring `hc` in the buildplan.
 * Contributes the requested health checker set with `$BP_HEALTH_CHECKER_DEPENDENCY` to a layer marked `launch` with command on `$PATH`.
-* Contributes `health-check` process types. If set, includes arguments from the health checker's arguments environment variable on the process type.
+* Creates a symlink to the health check process at `/workspace/health-check`.
 
 ## Configuration
 
