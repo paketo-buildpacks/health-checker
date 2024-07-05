@@ -24,10 +24,6 @@ import (
 	"github.com/paketo-buildpacks/libpak/bard"
 )
 
-type ProcessContributor interface {
-	ContributeProcesses() []libcnb.Process
-}
-
 type Build struct {
 	Logger bard.Logger
 }
@@ -63,11 +59,10 @@ func (b Build) Build(context libcnb.BuildContext) (libcnb.BuildResult, error) {
 			return libcnb.BuildResult{}, fmt.Errorf("unable to find dependency\n%w", err)
 		}
 
-		hcLayercontributor := NewTinyHealthChecker(hcDependency, dc, cr)
+		hcLayercontributor := NewTinyHealthChecker(hcDependency, dc, cr, context.Application.Path)
 		hcLayercontributor.Logger = b.Logger
 
 		result.Layers = append(result.Layers, hcLayercontributor)
-		result.Processes = hcLayercontributor.ContributeProcesses()
 	}
 
 	return result, nil

@@ -27,6 +27,7 @@ import (
 
 	"github.com/paketo-buildpacks/health-checker/hc"
 	"github.com/paketo-buildpacks/libpak"
+	"github.com/paketo-buildpacks/libpak/bard"
 )
 
 func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
@@ -37,10 +38,8 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 	)
 
 	it.Before(func() {
-		var err error
-
+		ctx.Application.Path = t.TempDir()
 		ctx.Layers.Path = t.TempDir()
-		Expect(err).NotTo(HaveOccurred())
 	})
 
 	it("contributes health checker", func() {
@@ -52,7 +51,7 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 		cr, err := libpak.NewConfigurationResolver(ctx.Buildpack, nil)
 		Expect(err).ToNot(HaveOccurred())
 
-		j := hc.NewTinyHealthChecker(dep, dc, cr)
+		j := hc.NewTinyHealthChecker(dep, dc, cr, ctx.Application.Path)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -63,10 +62,50 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 		Expect(layer.LayerTypes.Cache).To(BeFalse())
 		Expect(layer.LayerTypes.Launch).To(BeTrue())
 		Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeARegularFile())
+		Expect(filepath.Join(ctx.Application.Path, "health-check")).To(BeAnExistingFile())
 
 		finfo, err := os.Stat(filepath.Join(layer.Path, "bin", "thc"))
 		Expect(err).ToNot(HaveOccurred())
 		Expect(finfo.Mode().Perm().String()).To(Equal("-rwxrwxr-x"))
+	})
+
+	it("creates symlink even if layer is cached", func() {
+		dep := libpak.BuildpackDependency{
+			URI:    "https://localhost/stub-thc",
+			SHA256: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+		}
+		dc := libpak.DependencyCache{CachePath: "testdata"}
+		cr, err := libpak.NewConfigurationResolver(ctx.Buildpack, nil)
+		Expect(err).ToNot(HaveOccurred())
+
+		j := hc.NewTinyHealthChecker(dep, dc, cr, ctx.Application.Path)
+		j.Logger = bard.NewLogger(os.Stdout)
+		layer, err := ctx.Layers.Layer("test-layer")
+		Expect(err).NotTo(HaveOccurred())
+
+		symlinkPath := filepath.Join(ctx.Application.Path, "health-check")
+
+		layer, err = j.Contribute(layer)
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(layer.LayerTypes.Build).To(BeFalse())
+		Expect(layer.LayerTypes.Cache).To(BeFalse())
+		Expect(layer.LayerTypes.Launch).To(BeTrue())
+		Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeARegularFile())
+		Expect(symlinkPath).To(BeAnExistingFile())
+
+		finfo, err := os.Stat(filepath.Join(layer.Path, "bin", "thc"))
+		Expect(err).ToNot(HaveOccurred())
+		Expect(finfo.Mode().Perm().String()).To(Equal("-rwxrwxr-x"))
+
+		// Remove symlink
+		Expect(os.Remove(symlinkPath)).To(Succeed())
+
+		// Contribute again to test symlink is recreated
+		Expect(symlinkPath).ToNot(BeAnExistingFile())
+		layer, err = j.Contribute(layer)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(symlinkPath).To(BeAnExistingFile())
 	})
 
 	context("THC_PORT & THC_PATH are set", func() {
@@ -89,7 +128,7 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 			cr, err := libpak.NewConfigurationResolver(ctx.Buildpack, nil)
 			Expect(err).ToNot(HaveOccurred())
 
-			j := hc.NewTinyHealthChecker(dep, dc, cr)
+			j := hc.NewTinyHealthChecker(dep, dc, cr, ctx.Application.Path)
 			layer, err := ctx.Layers.Layer("test-layer")
 			Expect(err).NotTo(HaveOccurred())
 
@@ -104,6 +143,7 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 				"health-check/THC_PORT.default": "8081",
 			}))
 			Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeARegularFile())
+			Expect(filepath.Join(ctx.Application.Path, "health-check")).To(BeAnExistingFile())
 
 			finfo, err := os.Stat(filepath.Join(layer.Path, "bin", "thc"))
 			Expect(err).ToNot(HaveOccurred())

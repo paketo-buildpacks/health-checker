@@ -75,10 +75,6 @@ func testBuild(t *testing.T, context spec.G, it spec.S) {
 
 		Expect(result.Layers).To(HaveLen(1))
 		Expect(result.Layers[0].Name()).To(Equal("thc"))
-		Expect(result.Processes[0].Type).To(Equal("health-check"))
-		Expect(result.Processes[0].Command).To(Equal("thc"))
-		Expect(result.Processes[0].Arguments).To(HaveLen(0))
-		Expect(result.Processes[0].Default).To(BeFalse())
-		Expect(result.Processes[0].Direct).To(BeTrue())
+		Expect(result.Processes).To(HaveLen(0))
 	})
 }

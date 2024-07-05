@@ -22,40 +22,42 @@ import (
 	"path/filepath"
 
 	"github.com/buildpacks/libcnb"
+	"github.com/heroku/color"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
 	"github.com/paketo-buildpacks/libpak/sherpa"
 )
 
 type TinyHealthChecker struct {
+	ApplicationPath  string
 	ConfigResolver   libpak.ConfigurationResolver
 	LayerContributor libpak.DependencyLayerContributor
 	Logger           bard.Logger
 }
 
-func NewTinyHealthChecker(dependency libpak.BuildpackDependency, cache libpak.DependencyCache, cr libpak.ConfigurationResolver) TinyHealthChecker {
+func NewTinyHealthChecker(dependency libpak.BuildpackDependency, cache libpak.DependencyCache, cr libpak.ConfigurationResolver, appPath string) TinyHealthChecker {
 	contributor := libpak.NewDependencyLayerContributor(dependency, cache, libcnb.LayerTypes{
 		Build:  false,
 		Cache:  false,
 		Launch: true,
 	})
 
-	return TinyHealthChecker{LayerContributor: contributor, ConfigResolver: cr}
+	return TinyHealthChecker{ApplicationPath: appPath, LayerContributor: contributor, ConfigResolver: cr}
 }
 
 func (t TinyHealthChecker) Contribute(layer libcnb.Layer) (libcnb.Layer, error) {
 	t.LayerContributor.Logger = t.Logger
 
-	return t.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
-		binDir := filepath.Join(layer.Path, "bin")
+	binDir := filepath.Join(layer.Path, "bin")
+	hcBin := filepath.Join(binDir, "thc")
+	symlinkPath := filepath.Join(t.ApplicationPath, "health-check")
 
+	newLayer, err := t.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
 		t.Logger.Bodyf("Copying from %s to %s", artifact.Name(), binDir)
-
 		if err := os.MkdirAll(binDir, 0755); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to mkdir\n%w", err)
 		}
 
-		hcBin := filepath.Join(binDir, "thc")
 		if err := sherpa.CopyFile(artifact, hcBin); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to copy tiny health checker\n%w", err)
 		}
@@ -73,17 +75,18 @@ func (t TinyHealthChecker) Contribute(layer libcnb.Layer) (libcnb.Layer, error) 
 
 		return layer, nil
 	})
-}
 
-func (t TinyHealthChecker) ContributeProcesses() []libcnb.Process {
-	return []libcnb.Process{
-		{
-			Type:    "health-check",
-			Command: "thc",
-			Direct:  true,
-			Default: false,
-		},
+	// symlink `thc` into `/workspace/health-check` so it's easy to invoke
+	t.Logger.Bodyf("The Tiny Health Checker binary is available at %s", hcBin)
+	if err := os.Symlink(hcBin, symlinkPath); err != nil && !os.IsExist(err) {
+		return libcnb.Layer{}, fmt.Errorf("unable to create symlink\n%s", err)
+	} else if err != nil && os.IsExist(err) {
+		t.Logger.Bodyf(color.New(color.Faint, color.Bold).Sprintf("WARNING: A file already exists at %s, skipping creation of symlink", symlinkPath))
+	} else {
+		t.Logger.Bodyf("A symlink is available at %s for your convenience", symlinkPath)
 	}
+
+	return newLayer, err
 }
 
 func (t TinyHealthChecker) Name() string {
