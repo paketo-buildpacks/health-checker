@@ -66,13 +66,6 @@ func (t TinyHealthChecker) Contribute(layer libcnb.Layer) (libcnb.Layer, error) 
 			return libcnb.Layer{}, fmt.Errorf("unable to `chmod 775` binary %s\n%w", hcBin, err)
 		}
 
-		// if set at build time, we bake them into the image, user can override at runtime
-		for _, envVarName := range []string{"THC_PORT", "THC_PATH", "CONN_TIMEOUT", "REQ_TIMEOUT"} {
-			if val, found := t.ConfigResolver.Resolve(envVarName); found {
-				layer.LaunchEnvironment.ProcessDefault("health-check", envVarName, val)
-			}
-		}
-
 		return layer, nil
 	})
 

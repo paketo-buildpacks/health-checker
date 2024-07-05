@@ -27,7 +27,6 @@ import (
 
 	"github.com/paketo-buildpacks/health-checker/hc"
 	"github.com/paketo-buildpacks/libpak"
-	"github.com/paketo-buildpacks/libpak/bard"
 )
 
 func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
@@ -79,7 +78,6 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 		Expect(err).ToNot(HaveOccurred())
 
 		j := hc.NewTinyHealthChecker(dep, dc, cr, ctx.Application.Path)
-		j.Logger = bard.NewLogger(os.Stdout)
 		layer, err := ctx.Layers.Layer("test-layer")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -106,48 +104,5 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 		layer, err = j.Contribute(layer)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(symlinkPath).To(BeAnExistingFile())
-	})
-
-	context("THC_PORT & THC_PATH are set", func() {
-		it.Before(func() {
-			Expect(os.Setenv("THC_PORT", "8081")).To(Succeed())
-			Expect(os.Setenv("THC_PATH", "/foo")).To(Succeed())
-		})
-
-		it.After(func() {
-			Expect(os.Unsetenv("THC_PORT")).To(Succeed())
-			Expect(os.Unsetenv("THC_PATH")).To(Succeed())
-		})
-
-		it("contributes a health checker with custom port and path", func() {
-			dep := libpak.BuildpackDependency{
-				URI:    "https://localhost/stub-thc",
-				SHA256: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-			}
-			dc := libpak.DependencyCache{CachePath: "testdata"}
-			cr, err := libpak.NewConfigurationResolver(ctx.Buildpack, nil)
-			Expect(err).ToNot(HaveOccurred())
-
-			j := hc.NewTinyHealthChecker(dep, dc, cr, ctx.Application.Path)
-			layer, err := ctx.Layers.Layer("test-layer")
-			Expect(err).NotTo(HaveOccurred())
-
-			layer, err = j.Contribute(layer)
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(layer.LayerTypes.Build).To(BeFalse())
-			Expect(layer.LayerTypes.Cache).To(BeFalse())
-			Expect(layer.LayerTypes.Launch).To(BeTrue())
-			Expect(layer.LaunchEnvironment).To(Equal(libcnb.Environment{
-				"health-check/THC_PATH.default": "/foo",
-				"health-check/THC_PORT.default": "8081",
-			}))
-			Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeARegularFile())
-			Expect(filepath.Join(ctx.Application.Path, "health-check")).To(BeAnExistingFile())
-
-			finfo, err := os.Stat(filepath.Join(layer.Path, "bin", "thc"))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(finfo.Mode().Perm().String()).To(Equal("-rwxrwxr-x"))
-		})
 	})
 }
