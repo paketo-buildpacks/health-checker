@@ -60,16 +60,16 @@ api = "0.7"
       uri = "https://github.com/dmikusa-pivotal/tiny-health-checker/blob/main/LICENSE"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.30.0:*:*:*:*:*:*:*"]
+    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.31.0:*:*:*:*:*:*:*"]
     id = "thc"
     name = "Tiny Health Checker"
-    purl = "pkg:generic/thc@0.30.0?arch=arm64"
-    sha256 = "e8a3b893075f641e33360de37e8d1ae6159cecc21532e3f429b4bd06ccce37da"
-    source = "https://github.com/dmikusa/tiny-health-checker/archive/refs/tags/v0.30.0.tar.gz"
-    source-sha256 = "efee754c59e95cb569ded20e8b99fccbf783b034f2a443ccc4a45dd8463b00c7"
+    purl = "pkg:generic/thc@0.31.0?arch=arm64"
+    sha256 = "49b9b1df68175c12a1d5b45ba5f39b018efd5d63009264403ce08f588722a59b"
+    source = "https://github.com/dmikusa/tiny-health-checker/archive/refs/tags/v0.31.0.tar.gz"
+    source-sha256 = "2729496e85942b3aac2662310e86c5daf6c6f00005b450465a67b2c8e1065811"
     stacks = ["*"]
-    uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.30.0/thc-aarch64-unknown-linux-musl"
-    version = "0.30.0"
+    uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.31.0/thc-aarch64-unknown-linux-musl"
+    version = "0.31.0"
 
     [[metadata.dependencies.licenses]]
       type = "Apache-2"
