@@ -15,10 +15,12 @@ require (
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/creack/pty v1.1.24 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
+	github.com/h2non/filetype v1.1.3 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/hashstructure/v2 v2.0.2 // indirect
+	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
