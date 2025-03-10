@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2024 the original author or authors.
+ * Copyright 2018-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 
 	it("contributes health checker", func() {
 		dep := libpak.BuildpackDependency{
-			URI:    "https://localhost/stub-thc",
-			SHA256: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+			URI:    "https://localhost/tiny-health-checker-aarch64-unknown-linux-musl.tar.xz",
+			SHA256: "13f76cc35100b444e736c6ed345db7b3f3b52ecc8809fab19f92294651a19ed7",
 		}
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 		cr, err := libpak.NewConfigurationResolver(ctx.Buildpack, nil)
@@ -60,7 +60,8 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 		Expect(layer.LayerTypes.Build).To(BeFalse())
 		Expect(layer.LayerTypes.Cache).To(BeFalse())
 		Expect(layer.LayerTypes.Launch).To(BeTrue())
-		Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeARegularFile())
+		Expect(filepath.Join(layer.Path, "thc")).To(BeARegularFile())
+		Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeAnExistingFile())
 		Expect(filepath.Join(ctx.Application.Path, "health-check")).To(BeAnExistingFile())
 
 		finfo, err := os.Stat(filepath.Join(layer.Path, "bin", "thc"))
@@ -70,8 +71,8 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 
 	it("creates symlink even if layer is cached", func() {
 		dep := libpak.BuildpackDependency{
-			URI:    "https://localhost/stub-thc",
-			SHA256: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+			URI:    "https://localhost/tiny-health-checker-aarch64-unknown-linux-musl.tar.xz",
+			SHA256: "13f76cc35100b444e736c6ed345db7b3f3b52ecc8809fab19f92294651a19ed7",
 		}
 		dc := libpak.DependencyCache{CachePath: "testdata"}
 		cr, err := libpak.NewConfigurationResolver(ctx.Buildpack, nil)
@@ -89,7 +90,8 @@ func testTinyHealthChecker(t *testing.T, context spec.G, it spec.S) {
 		Expect(layer.LayerTypes.Build).To(BeFalse())
 		Expect(layer.LayerTypes.Cache).To(BeFalse())
 		Expect(layer.LayerTypes.Launch).To(BeTrue())
-		Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeARegularFile())
+		Expect(filepath.Join(layer.Path, "thc")).To(BeARegularFile())
+		Expect(filepath.Join(layer.Path, "bin", "thc")).To(BeAnExistingFile())
 		Expect(symlinkPath).To(BeAnExistingFile())
 
 		finfo, err := os.Stat(filepath.Join(layer.Path, "bin", "thc"))

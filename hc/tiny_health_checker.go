@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2024 the original author or authors.
+ * Copyright 2018-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import (
 	"github.com/heroku/color"
 	"github.com/paketo-buildpacks/libpak"
 	"github.com/paketo-buildpacks/libpak/bard"
-	"github.com/paketo-buildpacks/libpak/sherpa"
+	"github.com/paketo-buildpacks/libpak/crush"
 )
 
 type TinyHealthChecker struct {
@@ -53,13 +53,17 @@ func (t TinyHealthChecker) Contribute(layer libcnb.Layer) (libcnb.Layer, error) 
 	symlinkPath := filepath.Join(t.ApplicationPath, "health-check")
 
 	newLayer, err := t.LayerContributor.Contribute(layer, func(artifact *os.File) (libcnb.Layer, error) {
-		t.Logger.Bodyf("Copying from %s to %s", artifact.Name(), binDir)
+		t.Logger.Bodyf("Expanding to %s", layer.Path)
+		if err := crush.Extract(artifact, layer.Path, 1); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to expand tiny-health-checker\n%w", err)
+		}
+
 		if err := os.MkdirAll(binDir, 0755); err != nil {
 			return libcnb.Layer{}, fmt.Errorf("unable to mkdir\n%w", err)
 		}
 
-		if err := sherpa.CopyFile(artifact, hcBin); err != nil {
-			return libcnb.Layer{}, fmt.Errorf("unable to copy tiny health checker\n%w", err)
+		if err := os.Symlink(filepath.Join(layer.Path, "thc"), hcBin); err != nil {
+			return libcnb.Layer{}, fmt.Errorf("unable to symlink thc\n%w", err)
 		}
 
 		if err := os.Chmod(hcBin, 0775); err != nil {
