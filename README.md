@@ -1,4 +1,4 @@
-# `gcr.io/paketo-buildpacks/health-checker`
+# `paketo-buildpacks/health-checker`
 
 The Paketo Buildpack for Health Checker is a Cloud Native Buildpack that provides a health checker tool that can be used to validate application health.
 
