@@ -1,4 +1,7 @@
-# `paketo-buildpacks/health-checker`
+# Paketo Buildpack for Health Checker
+
+## Buildpack ID: `paketo-buildpacks/health-checker`
+## Registry URLs: `docker.io/paketobuildpacks/health-checker`
 
 The Paketo Buildpack for Health Checker is a Cloud Native Buildpack that provides a health checker tool that can be used to validate application health.
 
