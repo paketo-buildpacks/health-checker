@@ -27,7 +27,7 @@ jobs:
             - id: dependency
               uses: docker://ghcr.io/paketo-buildpacks/actions/github-release-dependency:main
               with:
-                glob: thc-x86_64-unknown-linux-musl
+                glob: ^tiny-health-checker-x86_64-unknown-linux-musl\.tar\.xz$
                 owner: dmikusa
                 repository: tiny-health-checker
                 token: ${{ secrets.PAKETO_BOT_GITHUB_TOKEN }}
