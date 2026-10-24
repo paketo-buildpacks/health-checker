@@ -28,8 +28,8 @@ api = "0.7"
     uri = "https://github.com/paketo-buildpacks/health-checker/blob/main/LICENSE"
 
 [metadata]
-  include-files = ["LICENSE", "NOTICE", "README.md", "buildpack.toml", "linux/amd64/bin/build", "linux/amd64/bin/detect", "linux/amd64/bin/main", "linux/arm64/bin/build", "linux/arm64/bin/detect", "linux/arm64/bin/main"]
-  pre-package = "scripts/build.sh"
+  include-files = ["LICENSE", "NOTICE", "README.md", "buildpack.toml", "linux/amd64/bin/build", "linux/amd64/bin/detect", "linux/amd64/bin/run", "linux/arm64/bin/build", "linux/arm64/bin/detect", "linux/arm64/bin/run"]
+  pre-package = "scripts/build.sh --target linux/amd64 --target linux/arm64"
 
   [[metadata.configurations]]
     build = true
@@ -44,13 +44,16 @@ api = "0.7"
     name = "BP_HEALTH_CHECKER_DEPENDENCY"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.39.0:*:*:*:*:*:*:*"]
+    arch = "amd64"
+    checksum = "sha256:cb1797948015da46c222764a99ee30c06a6a9a30f5b87f212a28ea3c6d07610d"
+    cpe = "cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.39.0:*:*:*:*:*:*:*"
     id = "thc"
     name = "Tiny Health Checker"
+    os = "linux"
     purl = "pkg:generic/thc@0.39.0?arch=amd64"
     sha256 = "cb1797948015da46c222764a99ee30c06a6a9a30f5b87f212a28ea3c6d07610d"
     source = "https://github.com/dmikusa/tiny-health-checker/archive/refs/tags/v0.39.0.tar.gz"
-    source-sha256 = "905049713db1bfb7700f46601a9145ce52d16b30f7e816380e9e3bfe61f74766"
+    source-checksum = "sha256:905049713db1bfb7700f46601a9145ce52d16b30f7e816380e9e3bfe61f74766"
     stacks = ["*"]
     uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.39.0/tiny-health-checker-x86_64-unknown-linux-musl.tar.xz"
     version = "0.39.0"
@@ -60,13 +63,16 @@ api = "0.7"
       uri = "https://github.com/dmikusa-pivotal/tiny-health-checker/blob/main/LICENSE"
 
   [[metadata.dependencies]]
-    cpes = ["cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.39.0:*:*:*:*:*:*:*"]
+    arch = "arm64"
+    checksum = "sha256:c177033fd474af673bd64788d47e13708844f3946e1eb51cce6a422a23a5e8cc"
+    cpe = "cpe:2.3:a:dmikusa-pivotal:tiny-health-checker:0.39.0:*:*:*:*:*:*:*"
     id = "thc"
     name = "Tiny Health Checker"
+    os = "linux"
     purl = "pkg:generic/thc@0.39.0?arch=arm64"
     sha256 = "c177033fd474af673bd64788d47e13708844f3946e1eb51cce6a422a23a5e8cc"
     source = "https://github.com/dmikusa/tiny-health-checker/archive/refs/tags/v0.39.0.tar.gz"
-    source-sha256 = "905049713db1bfb7700f46601a9145ce52d16b30f7e816380e9e3bfe61f74766"
+    source-checksum = "sha256:905049713db1bfb7700f46601a9145ce52d16b30f7e816380e9e3bfe61f74766"
     stacks = ["*"]
     uri = "https://github.com/dmikusa/tiny-health-checker/releases/download/v0.39.0/tiny-health-checker-aarch64-unknown-linux-musl.tar.xz"
     version = "0.39.0"
@@ -74,6 +80,11 @@ api = "0.7"
     [[metadata.dependencies.licenses]]
       type = "Apache-2"
       uri = "https://github.com/dmikusa-pivotal/tiny-health-checker/blob/main/LICENSE"
+
+  [[metadata.dependency-constraints]]
+    constraint = "0.*"
+    id = "thc"
+    patches = 2
 
 [[stacks]]
   id = "*"
